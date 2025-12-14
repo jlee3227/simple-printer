@@ -12,23 +12,24 @@ import (
 	"golang.org/x/image/draw"
 )
 
-func GetPng(name string) (image.Image, error) {
+func GetPng(filename string) (image.Image, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {
-		return fmt.Errorf("Error opening file: %v\n", err)
+		return nil, fmt.Errorf("Error opening file: %v\n", err)
 	}
 
 	pic, err := toPng(data)
 	if err != nil {
-		return fmt.Errorf("Error converting to png: %v\n", err)
+		return nil, fmt.Errorf("Error converting to png: %v\n", err)
 	}
 
 	r := bytes.NewReader(pic)
 	img, _, err := image.Decode(r)
 	if err != nil {
-		return fmt.Errorf("Error decoding png: %v\n", err)
+		return nil, fmt.Errorf("Error decoding png: %v\n", err)
 	}
 
+	return img, nil
 }
 
 func toPng(imageBytes []byte) ([]byte, error) {
