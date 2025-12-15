@@ -1,6 +1,6 @@
 package main
 
-import "printer/cmd"
+import "github.com/jlee3227/simple-printer/cmd"
 
 func main() {
 	cmd.Execute()

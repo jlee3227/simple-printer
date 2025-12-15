@@ -1,9 +1,11 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"os"
+	"strings"
 
+	simple "github.com/jlee3227/simple-printer/util/print"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +17,14 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("printing something...")
+		if len(args) < 0 {
+			log.Fatal("Please provide a text to print.")
+		}
+
+		text := strings.Join(args, " ")
+		if err := simple.Print(text); err != nil {
+			log.Println("Failed to print:", err)
+		}
 	},
 }
 

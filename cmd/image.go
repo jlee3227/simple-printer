@@ -1,23 +1,26 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
 
+	simple "github.com/jlee3227/simple-printer/util/print"
 	"github.com/spf13/cobra"
 )
 
 // imageCmd represents the image command
 var imageCmd = &cobra.Command{
-	Use:   "image",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "image ",
+	Short: "Subcommand for printing an image",
+	Long:  `A subcommand for printing an image. The program will do it's best to convert the provided image into a PNG and resize so that it can fit onto receipt.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("image called with args:", args)
+		if len(args) < 0 {
+			log.Fatal("Please provide a file name.")
+		}
+
+		filename := args[0]
+		if err := simple.PrintImage(filename); err != nil {
+			log.Println("Failed to print:", err)
+		}
 	},
 }
 
