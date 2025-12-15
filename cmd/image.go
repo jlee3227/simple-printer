@@ -13,7 +13,7 @@ var imageCmd = &cobra.Command{
 	Short: "Subcommand for printing an image",
 	Long:  `A subcommand for printing an image. The program will do it's best to convert the provided image into a PNG and resize so that it can fit onto receipt.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 0 {
+		if len(args) < 1 {
 			log.Fatal("Please provide a file name.")
 		}
 

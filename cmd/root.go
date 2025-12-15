@@ -17,7 +17,7 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 0 {
+		if len(args) < 1 {
 			log.Fatal("Please provide a text to print.")
 		}
 
