@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/jpeg"
 	"image/png"
+	"log"
 	"net/http"
 	"os"
 
@@ -61,6 +62,8 @@ func Resize(img image.Image) image.Image {
 	if img.Bounds().Max.X < 1600 {
 		resizeFactor = 3
 	}
+
+	log.Println(img.Bounds().Max.X/resizeFactor, img.Bounds().Max.Y/resizeFactor)
 
 	img2 := image.NewRGBA(image.Rect(0, 0, img.Bounds().Max.X/resizeFactor, img.Bounds().Max.Y/resizeFactor))
 	draw.NearestNeighbor.Scale(img2, img2.Rect, img, img.Bounds(), draw.Over, nil)
