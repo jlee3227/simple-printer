@@ -9,7 +9,7 @@ import (
 
 // imageCmd represents the image command
 var imageCmd = &cobra.Command{
-	Use:   "image ",
+	Use:   "image",
 	Short: "Subcommand for printing an image",
 	Long:  `A subcommand for printing an image. The program will do it's best to convert the provided image into a PNG and resize so that it can fit onto receipt.`,
 	Run: func(cmd *cobra.Command, args []string) {

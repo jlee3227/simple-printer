@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"log"
 	"os"
-	"strings"
 
-	simple "github.com/jlee3227/simple-printer/util/print"
 	"github.com/spf13/cobra"
 )
 
@@ -16,16 +13,8 @@ var rootCmd = &cobra.Command{
 	Long:  `A program for printing text, images and QR codes to a reciept printer.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			log.Fatal("Please provide a text to print.")
-		}
-
-		text := strings.Join(args, " ")
-		if err := simple.Print(text); err != nil {
-			log.Println("Failed to print:", err)
-		}
-	},
+	// Run: func(cmd *cobra.Command, args []string) {
+	// },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
