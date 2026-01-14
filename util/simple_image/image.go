@@ -1,4 +1,4 @@
-package image
+package simple_image
 
 import (
 	"bytes"

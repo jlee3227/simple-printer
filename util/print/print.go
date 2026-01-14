@@ -2,6 +2,7 @@ package print
 
 import (
 	"fmt"
+	"image"
 	"image/color"
 	"io"
 	"log"
@@ -63,7 +64,7 @@ func PrintImage(filename string) error {
 	}
 
 	dstImg := imaging.Resize(img, 710, 0, imaging.Lanczos)
-	dstImg = imaging.Grayscale(dstImg)
+	outputImg := image.Image(dstImg)
 
 	// Setting colors for dithering
 	palette := []color.Color{
@@ -73,10 +74,10 @@ func PrintImage(filename string) error {
 
 	// Create ditherer and dither image
 	d := dither.NewDitherer(palette)
-	d.Matrix = dither.FloydSteinberg
-	dstImg = d.Dither(dstImg)
+	d.Matrix = dither.ErrorDiffusionStrength(dither.FloydSteinberg, 0.75)
+	outputImg = d.Dither(outputImg)
 
-	_, err = p.PrintImage(dstImg)
+	_, err = p.PrintImage(outputImg)
 	if err != nil {
 		return fmt.Errorf("Failed to print image: %v\n", err)
 	}
