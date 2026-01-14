@@ -2,13 +2,14 @@ package print
 
 import (
 	"fmt"
+	"image/color"
 	"io"
 	"log"
 	"os"
 
 	"github.com/disintegration/imaging"
 	"github.com/hennedo/escpos"
-	"github.com/jlee3227/simple-printer/util/image"
+	"github.com/makeworld-the-better-one/dither/v2"
 )
 
 func Print(text string) error {
@@ -44,38 +45,6 @@ func Print(text string) error {
 }
 
 func PrintImage(filename string) error {
-	log.Println("Starting image print job...")
-
-	f, err := os.OpenFile("/dev/usb/lp0", os.O_RDWR, 0)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	w := io.ReadWriter(f)
-	p := escpos.New(w)
-	p.SetConfig(escpos.ConfigEpsonTMT88II)
-
-	img, err := image.GetPng(filename)
-	if err != nil {
-		return fmt.Errorf("Error getting png: %v\n", err)
-	}
-
-	img = image.Resize(img)
-
-	_, err = p.PrintImage(img)
-	if err != nil {
-		return fmt.Errorf("Failed to print image: %v\n", err)
-	}
-	p.Print()
-	p.PrintAndCut()
-
-	log.Println("Image print job completed.")
-
-	return nil
-}
-
-func PrintImage2(filename string) error {
 	log.Println("Starting image print job with new library...")
 
 	f, err := os.OpenFile("/dev/usb/lp0", os.O_RDWR, 0)
@@ -95,6 +64,17 @@ func PrintImage2(filename string) error {
 
 	dstImg := imaging.Resize(img, 710, 0, imaging.Lanczos)
 	dstImg = imaging.Grayscale(dstImg)
+
+	// Setting colors for dithering
+	palette := []color.Color{
+		color.Black,
+		color.White,
+	}
+
+	// Create ditherer and dither image
+	d := dither.NewDitherer(palette)
+	d.Matrix = dither.FloydSteinberg
+	dstImg = d.Dither(dstImg)
 
 	_, err = p.PrintImage(dstImg)
 	if err != nil {

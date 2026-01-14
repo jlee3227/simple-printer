@@ -21,9 +21,6 @@ var imageCmd = &cobra.Command{
 		if err := simple.PrintImage(filename); err != nil {
 			log.Println("Failed to print:", err)
 		}
-		if err := simple.PrintImage2(filename); err != nil {
-			log.Println("Failed to print:", err)
-		}
 	},
 }
 

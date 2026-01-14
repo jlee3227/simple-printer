@@ -1,6 +1,3 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -15,7 +12,7 @@ import (
 var textCmd = &cobra.Command{
 	Use:   "text",
 	Short: "Subcommand for printing text",
-	Long:  `A subcommand for printing text strings.`,
+	Long:  `A subcommand for printing a string of text. Ideally, just a paragraph at most.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			log.Fatal("Please provide a text to print.")
@@ -25,6 +22,16 @@ var textCmd = &cobra.Command{
 		if err := simple.Print(text); err != nil {
 			log.Println("Failed to print:", err)
 		}
+	},
+}
+
+// listCmd represents the list command
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: "Subcommand for printing a bulleted list of strings",
+	Long:  `A subcommand for printing a bulleted list of items. Each item is a text string. Entering an empty line will exit input and print the list.`,
+	Run: func(cmd *cobra.Command, args []string) {
+
 	},
 }
 
