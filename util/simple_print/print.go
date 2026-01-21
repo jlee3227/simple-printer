@@ -58,15 +58,19 @@ func PrintList(list []string) error {
 	p := escpos.New(w)
 	p.SetConfig(escpos.ConfigEpsonTMT88II)
 
-	p.LineFeed()
-	p.LineFeed()
-	p.LineFeed()
+	// Print title of list
+	p.Size(2, 2).Write(list[0])
+	p.Print()
 	p.LineFeed()
 
-	for _, item := range list {
-		p.Write("- " + item)
+	for _, item := range list[1:] {
+		p.Size(1, 1).Write("- " + item)
 		p.Print()
+		p.LineFeed()
 	}
+
+	p.LineFeed()
+	p.LineFeed()
 
 	// This is necessary to flush the buffer and force the printer to print
 	// in case the supplied string is very long.

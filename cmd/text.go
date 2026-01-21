@@ -34,10 +34,17 @@ var listCmd = &cobra.Command{
 	Short: "Subcommand for printing a bulleted list of strings",
 	Long:  `A subcommand for printing a bulleted list of items. Each item is a text string. Entering an empty line will exit input and print the list.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Input list items. Inputting an empty line will print the list.")
 		scanner := bufio.NewScanner(os.Stdin)
-
 		var lines []string
+
+		fmt.Println("Enter list title:")
+		scanner.Scan()
+		if err := scanner.Err(); err != nil {
+			log.Fatal("Failed to get input:", err)
+		}
+		lines = append(lines, scanner.Text())
+
+		fmt.Println("Input list items. Inputting an empty line will print the list.")
 		for {
 			scanner.Scan()
 			line := scanner.Text()
