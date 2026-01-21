@@ -3,7 +3,7 @@ package cmd
 import (
 	"log"
 
-	simple "github.com/jlee3227/simple-printer/util/print"
+	"github.com/jlee3227/simple-printer/util/simple_print"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +18,7 @@ var imageCmd = &cobra.Command{
 		}
 
 		filename := args[0]
-		if err := simple.PrintImage(filename); err != nil {
+		if err := simple_print.PrintImage(filename); err != nil {
 			log.Println("Failed to print:", err)
 		}
 	},

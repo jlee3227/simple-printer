@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"bufio"
+	"fmt"
 	"log"
+	"os"
 	"strings"
 
-	simple "github.com/jlee3227/simple-printer/util/print"
+	"github.com/jlee3227/simple-printer/util/simple_print"
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +22,8 @@ var textCmd = &cobra.Command{
 		}
 
 		text := strings.Join(args, " ")
-		if err := simple.Print(text); err != nil {
-			log.Println("Failed to print:", err)
+		if err := simple_print.Print(text); err != nil {
+			log.Println("Failed to print text:", err)
 		}
 	},
 }
@@ -31,12 +34,33 @@ var listCmd = &cobra.Command{
 	Short: "Subcommand for printing a bulleted list of strings",
 	Long:  `A subcommand for printing a bulleted list of items. Each item is a text string. Entering an empty line will exit input and print the list.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Input list items. Inputting an empty line will print the list.")
+		scanner := bufio.NewScanner(os.Stdin)
 
+		var lines []string
+		for {
+			scanner.Scan()
+			line := scanner.Text()
+			if len(line) == 0 {
+				break
+			}
+			lines = append(lines, line)
+		}
+
+		err := scanner.Err()
+		if err != nil {
+			log.Fatal("Failed to get input:", err)
+		}
+
+		if err := simple_print.PrintList(lines); err != nil {
+			log.Println("Failed to print list:", err)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(textCmd)
+	rootCmd.AddCommand(listCmd)
 
 	// Here you will define your flags and configuration settings.
 

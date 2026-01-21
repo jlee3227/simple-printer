@@ -13,6 +13,8 @@ import (
 	"golang.org/x/image/draw"
 )
 
+// Most of this is irrelevant now that I switched to github.com/disintegration/imaging but it's a good(?) look into how I handled images with the standard lib.
+
 func GetPng(filename string) (image.Image, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {

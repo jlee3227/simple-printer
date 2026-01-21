@@ -1,4 +1,4 @@
-package print
+package simple_print
 
 import (
 	"fmt"
@@ -23,7 +23,6 @@ func Print(text string) error {
 	defer f.Close()
 
 	w := io.ReadWriter(f)
-
 	p := escpos.New(w)
 	p.SetConfig(escpos.ConfigEpsonTMT88II)
 
@@ -42,6 +41,40 @@ func Print(text string) error {
 
 	log.Println("Text print job completed.")
 
+	return nil
+}
+
+// TODO: Add flag to make different types of lists (numbered, bulleted, checkbox)
+func PrintList(list []string) error {
+	log.Println("Starting list print job...")
+
+	f, err := os.OpenFile("/dev/usb/lp0", os.O_RDWR, 0)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	w := io.ReadWriter(f)
+	p := escpos.New(w)
+	p.SetConfig(escpos.ConfigEpsonTMT88II)
+
+	p.LineFeed()
+	p.LineFeed()
+	p.LineFeed()
+	p.LineFeed()
+
+	for _, item := range list {
+		p.Write("- " + item)
+		p.Print()
+	}
+
+	// This is necessary to flush the buffer and force the printer to print
+	// in case the supplied string is very long.
+	p.Print()
+	p.Print()
+	p.PrintAndCut()
+
+	log.Println("List print job completed.")
 	return nil
 }
 
@@ -84,7 +117,7 @@ func PrintImage(filename string) error {
 	p.Print()
 	p.PrintAndCut()
 
-	log.Println("Image print job with new library completed.")
+	log.Println("Image print job completed.")
 
 	return nil
 }
