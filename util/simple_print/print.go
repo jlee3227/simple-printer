@@ -64,7 +64,7 @@ func PrintList(list []string) error {
 	p.LineFeed()
 
 	for _, item := range list[1:] {
-		p.Size(1, 1).Write("- " + item)
+		p.Size(1, 1).Write(item)
 		p.Print()
 		p.LineFeed()
 	}
