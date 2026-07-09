@@ -13,52 +13,48 @@ import (
 	"github.com/makeworld-the-better-one/dither/v2"
 )
 
-func Print(text string) error {
+func openPrinter(device string) (*escpos.Escpos, *os.File, error) {
+	f, err := os.OpenFile(device, os.O_RDWR, 0)
+	if err != nil {
+		return nil, nil, err
+	}
+	p := escpos.New(io.ReadWriter(f))
+	p.SetConfig(escpos.ConfigEpsonTMT88II)
+	return p, f, nil
+}
+
+func Print(device, text string) error {
 	log.Println("Starting text print job...")
 
-	f, err := os.OpenFile("/dev/usb/lp0", os.O_RDWR, 0)
+	p, f, err := openPrinter(device)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	w := io.ReadWriter(f)
-	p := escpos.New(w)
-	p.SetConfig(escpos.ConfigEpsonTMT88II)
-
 	p.Write(text)
-
 	p.LineFeed()
 	p.LineFeed()
 	p.LineFeed()
 	p.LineFeed()
-
-	// This is necessary to flush the buffer and force the printer to print
-	// in case the supplied string is very long.
 	p.Print()
 	p.Print()
 	p.PrintAndCut()
 
 	log.Println("Text print job completed.")
-
 	return nil
 }
 
 // TODO: Add flag to make different types of lists (numbered, bulleted, checkbox)
-func PrintList(list []string) error {
+func PrintList(device string, list []string) error {
 	log.Println("Starting list print job...")
 
-	f, err := os.OpenFile("/dev/usb/lp0", os.O_RDWR, 0)
+	p, f, err := openPrinter(device)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	w := io.ReadWriter(f)
-	p := escpos.New(w)
-	p.SetConfig(escpos.ConfigEpsonTMT88II)
-
-	// Print title of list
 	p.Size(2, 2).Write(list[0])
 	p.Print()
 	p.LineFeed()
@@ -71,9 +67,6 @@ func PrintList(list []string) error {
 
 	p.LineFeed()
 	p.LineFeed()
-
-	// This is necessary to flush the buffer and force the printer to print
-	// in case the supplied string is very long.
 	p.Print()
 	p.Print()
 	p.PrintAndCut()
@@ -82,46 +75,33 @@ func PrintList(list []string) error {
 	return nil
 }
 
-func PrintImage(filename string) error {
-	log.Println("Starting image print job with new library...")
+func PrintImage(device, filename string) error {
+	log.Println("Starting image print job...")
 
-	f, err := os.OpenFile("/dev/usb/lp0", os.O_RDWR, 0)
+	p, f, err := openPrinter(device)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer f.Close()
 
-	w := io.ReadWriter(f)
-	p := escpos.New(w)
-	p.SetConfig(escpos.ConfigEpsonTMT88II)
-
 	img, err := imaging.Open(filename)
 	if err != nil {
-		return fmt.Errorf("Error retrieving image: %v\n", err)
+		return fmt.Errorf("error retrieving image: %w", err)
 	}
 
 	dstImg := imaging.Resize(img, 710, 0, imaging.Lanczos)
-	outputImg := image.Image(dstImg)
 
-	// Setting colors for dithering
-	palette := []color.Color{
-		color.Black,
-		color.White,
-	}
-
-	// Create ditherer and dither image
+	palette := []color.Color{color.Black, color.White}
 	d := dither.NewDitherer(palette)
 	d.Matrix = dither.ErrorDiffusionStrength(dither.FloydSteinberg, 0.75)
-	outputImg = d.Dither(outputImg)
+	outputImg := image.Image(d.Dither(dstImg))
 
-	_, err = p.PrintImage(outputImg)
-	if err != nil {
-		return fmt.Errorf("Failed to print image: %v\n", err)
+	if _, err = p.PrintImage(outputImg); err != nil {
+		return fmt.Errorf("failed to print image: %w", err)
 	}
 	p.Print()
 	p.PrintAndCut()
 
 	log.Println("Image print job completed.")
-
 	return nil
 }

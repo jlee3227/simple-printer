@@ -1,39 +1,24 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/jlee3227/simple-printer/util/simple_print"
 	"github.com/spf13/cobra"
 )
 
-// imageCmd represents the image command
 var imageCmd = &cobra.Command{
-	Use:   "image",
-	Short: "Subcommand for printing an image",
-	Long:  `A subcommand for printing an image. The program will do it's best to convert the provided image into a PNG and resize so that it can fit onto receipt.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			log.Fatal("Please provide a file name.")
+	Use:   "image <file>",
+	Short: "Print an image",
+	Long:  `Print an image to the receipt printer. Resizes and dithers to fit receipt width.`,
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		device, err := cmd.Flags().GetString("device")
+		if err != nil {
+			return err
 		}
-
-		filename := args[0]
-		if err := simple_print.PrintImage(filename); err != nil {
-			log.Println("Failed to print:", err)
-		}
+		return simple_print.PrintImage(device, args[0])
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(imageCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// imageCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// imageCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
